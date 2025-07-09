@@ -143,10 +143,10 @@ where
 
         // Evaluate the values of g(X), h(X), s(X), and z_h(X) over the coset domain using threads
         let (g_evals, h_evals, s_evals, o_evals, z_evals) = pool_run.install(|| {
-            let g_evals = g_coeff.clone().evaluate_over_domain(coset_domain).evals;
-            let h_evals = h_coeff.clone().evaluate_over_domain(coset_domain).evals;
-            let s_evals = s_coeff.clone().evaluate_over_domain(coset_domain).evals;
-            let o_evals = o_coeff.clone().evaluate_over_domain(coset_domain).evals;
+            let g_evals = g_coeff.evaluate_over_domain(coset_domain).evals;
+            let h_evals = h_coeff.evaluate_over_domain(coset_domain).evals;
+            let s_evals = s_coeff.evaluate_over_domain(coset_domain).evals;
+            let o_evals = o_coeff.evaluate_over_domain(coset_domain).evals;
             let z_evals = zero_domain
                 .vanishing_polynomial()
                 .evaluate_over_domain(coset_domain)
@@ -177,15 +177,39 @@ where
         end_timer!(ifft_q_time);
         let commit_time = start_timer!(|| "KZG commit to (g,h,s,o) polynomials");
 
+
+        /* recalculate the polynomials (coeffs) */
+        // compute the polynomials corresponding to g, h, and s using interpolation (IFFT)
+        // let ifft_time = start_timer!(|| "IFFT for g,h,s,o from evaluations to coefficients");
+        // println!("Fuck");
+        let ghso_coeffs: Vec<_> = pool_run.install(|| {
+            input_poly
+                .par_iter()
+                .enumerate()
+                .map(|(i, evals)| (i, evals.clone().interpolate()))
+                .collect()
+        });
+        let mut ghso_sorted_coeffs = ghso_coeffs;
+        ghso_sorted_coeffs.sort_by_key(|(i, _)| *i);
+        let [g_coeff, h_coeff, s_coeff, o_coeff]: [_; 4] = ghso_sorted_coeffs
+            .into_iter()
+            .map(|(_, coeff)| coeff)
+            .collect::<Vec<_>>()
+            .try_into()
+            .unwrap();
+
+        // end_timer!(ifft_time);
+        /* end here */
+
         // Use the pool_commit thread pool to perform the batch_commit operation
         let comm_rs = pool_commit.install(|| {
             PCS::batch_commit(
                 &zero_params.ck,
                 &vec![
-                    g_coeff.clone(),
-                    h_coeff.clone(),
-                    s_coeff.clone(),
-                    o_coeff.clone(),
+                    g_coeff,
+                    h_coeff,
+                    s_coeff,
+                    o_coeff,
                 ],
             )
             .unwrap()
@@ -235,6 +259,29 @@ where
             .append_serializable_element(b"comm_q", &comm_q)
             .unwrap();
         let r = transcript.get_and_append_challenge(b"sampling r").unwrap();
+
+
+         /* recalculate the polynomials (coeffs) */
+        // compute the polynomials corresponding to g, h, and s using interpolation (IFFT)
+        // let ifft_time = start_timer!(|| "IFFT for g,h,s,o from evaluations to coefficients");
+        let ghso_coeffs: Vec<_> = pool_run.install(|| {
+            input_poly
+                .par_iter()
+                .enumerate()
+                .map(|(i, evals)| (i, evals.clone().interpolate()))
+                .collect()
+        });
+        let mut ghso_sorted_coeffs = ghso_coeffs;
+        ghso_sorted_coeffs.sort_by_key(|(i, _)| *i);
+        let [g_coeff, h_coeff, s_coeff, o_coeff]: [_; 4] = ghso_sorted_coeffs
+            .into_iter()
+            .map(|(_, coeff)| coeff)
+            .collect::<Vec<_>>()
+            .try_into()
+            .unwrap();
+
+        // end_timer!(ifft_time);
+        /* end here */
 
         // Collect the evalution of the input polynomials at the challenge
         let mut inp_evals_at_rand = vec![];
