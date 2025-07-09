@@ -115,15 +115,15 @@ fn opt_univariate_zero_check_multithread_benchmark(
 #[derive(Parser, Debug)]
 struct Args {
     /// Number of repetitions for each test
-    #[arg(long, default_value = "10")]
+    #[arg(long, default_value = "1")]
     repeat: usize,
 
     /// Minimum work size exponent (2^min_size)
-    #[arg(long, default_value = "10")]
+    #[arg(long, default_value = "16")]
     min_size: usize,
 
     /// Maximum work size exponent (inclusive, 2^max_size)
-    #[arg(long, default_value = "20")]
+    #[arg(long, default_value = "16")]
     max_size: usize,
 
     /// Number of threads to use for prepare input evaluations
