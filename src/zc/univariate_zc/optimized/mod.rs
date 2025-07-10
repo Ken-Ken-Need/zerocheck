@@ -181,7 +181,6 @@ where
         /* recalculate the polynomials (coeffs) */
         // compute the polynomials corresponding to g, h, and s using interpolation (IFFT)
         // let ifft_time = start_timer!(|| "IFFT for g,h,s,o from evaluations to coefficients");
-        // println!("Fuck");
         let ghso_coeffs: Vec<_> = pool_run.install(|| {
             input_poly
                 .par_iter()
