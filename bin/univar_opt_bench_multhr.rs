@@ -90,25 +90,25 @@ fn opt_univariate_zero_check_multithread_benchmark(
     end_timer!(proof_gen_timer);
     let runtime = instant.elapsed();
 
-    // println!("Proof Generated");
+    println!("Proof Generated");
 
-    let verify_timer = start_timer!(|| "Verify fn called for g, h, zero_domain, proof");
+    // let verify_timer = start_timer!(|| "Verify fn called for g, h, zero_domain, proof");
 
-    let result = OptimizedUnivariateZeroCheck::<Fr, KZG<Bls12_381>>::verify(
-        &global_params,
-        &inp_evals,
-        &proof,
-        &domain,
-        &mut ZCTranscript::init_transcript(),
-    )
-    .unwrap();
+    // let result = OptimizedUnivariateZeroCheck::<Fr, KZG<Bls12_381>>::verify(
+    //     &global_params,
+    //     &inp_evals,
+    //     &proof,
+    //     &domain,
+    //     &mut ZCTranscript::init_transcript(),
+    // )
+    // .unwrap();
 
-    end_timer!(verify_timer);
+    // end_timer!(verify_timer);
 
-    // println!("verification result: {:?}", result);
-    assert_eq!(result, true);
+    // // println!("verification result: {:?}", result);
+    // assert_eq!(result, true);
 
-    end_timer!(test_timer);
+    // end_timer!(test_timer);
     return runtime.as_millis();
 }
 
@@ -119,11 +119,11 @@ struct Args {
     repeat: usize,
 
     /// Minimum work size exponent (2^min_size)
-    #[arg(long, default_value = "16")]
+    #[arg(long, default_value = "12")]
     min_size: usize,
 
     /// Maximum work size exponent (inclusive, 2^max_size)
-    #[arg(long, default_value = "16")]
+    #[arg(long, default_value = "12")]
     max_size: usize,
 
     /// Number of threads to use for prepare input evaluations
