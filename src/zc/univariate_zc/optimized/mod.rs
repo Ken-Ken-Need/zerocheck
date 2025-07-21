@@ -375,7 +375,8 @@ where
 
 #[cfg(test)]
 mod tests {
-    use crate::pcs::univariate_pcs::kzg::KZG;
+    // use crate::pcs::univariate_pcs::kzg::KZG;
+    use crate::pcs::univariate_pcs::msm_uncheck_kzg::KZG;
     use crate::pcs::univariate_pcs::ligero::Ligero;
 
     use super::*;
