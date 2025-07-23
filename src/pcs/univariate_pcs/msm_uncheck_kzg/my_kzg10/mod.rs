@@ -27,6 +27,7 @@ where
     E: Pairing,
     P: DenseUVPolynomial<E::ScalarField>,
 {
+    println!("Wassup from fast_commit_unchecked!");
     // Degree check
     // ark_poly_commit::kzg10::KZG10::<E, P>::check_degree_is_too_large(polynomial.degree(), powers.size())?;
 

@@ -11,6 +11,7 @@ use zerocheck::pcs::univariate_pcs::{
     kzg::KZG,
     ligero::{Ligero, LigeroPoseidon},
 };
+use zerocheck::pcs::univariate_pcs::msm_uncheck_kzg::KZG as KZGUnchecked;
 use zerocheck::transcripts::ZCTranscript;
 use zerocheck::zc::univariate_zc::optimized::data_structures::ZeroCheckParams;
 use zerocheck::zc::univariate_zc::optimized::OptimizedUnivariateZeroCheck;
@@ -66,7 +67,7 @@ fn prepare_input_evals_domain<'a>(
 fn opt_univ_zc_multhr_benchmark_unchecked_kzg(
     input_evals: &[Evaluations<Fr>; 4],
     domain: GeneralEvaluationDomain<Fr>,
-    global_params: &ZeroCheckParams<KZG<Bls12_381>>,
+    global_params: &ZeroCheckParams<KZGUnchecked<Bls12_381>>,
     size: u32,
     run_threads: Option<usize>,
     batch_commit_threads: Option<usize>,
@@ -79,7 +80,7 @@ fn opt_univ_zc_multhr_benchmark_unchecked_kzg(
     let instant = Instant::now();
     let proof_gen_timer = start_timer!(|| "Prove fn called for KZG");
 
-    let proof = OptimizedUnivariateZeroCheck::<Fr, KZG<Bls12_381>>::prove(
+    let proof = OptimizedUnivariateZeroCheck::<Fr, KZGUnchecked<Bls12_381>>::prove(
         &global_params,
         &inp_evals,
         &domain,
@@ -95,7 +96,7 @@ fn opt_univ_zc_multhr_benchmark_unchecked_kzg(
 
     let verify_timer = start_timer!(|| "Verify fn called for KZG");
 
-    let result = OptimizedUnivariateZeroCheck::<Fr, KZG<Bls12_381>>::verify(
+    let result = OptimizedUnivariateZeroCheck::<Fr, KZGUnchecked<Bls12_381>>::verify(
         &global_params,
         &inp_evals,
         &proof,
@@ -324,7 +325,7 @@ fn bench_opt_uni_zc() {
             let total_runtime: u128 = match args.poly_commit_scheme.as_str() {
                 "msm_unchecked_kzg"=>{
                     let global_params =
-                        OptimizedUnivariateZeroCheck::<Fr, KZG<Bls12_381>>::setup(&pp).unwrap();
+                        OptimizedUnivariateZeroCheck::<Fr, KZGUnchecked<Bls12_381>>::setup(&pp).unwrap();
                     (0..args.repeat)
                         .map(|repeat_time| {
                             println!(

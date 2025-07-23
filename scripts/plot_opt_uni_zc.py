@@ -487,13 +487,13 @@ def parallel_stacked_bar_chart_univ_mulin_numvar_comm(save_fig=False):
 
 if __name__ == '__main__':
 
-    save_each_fig = False
+    save_each_fig = True
 
-    # stack_univar_zc_df = plot_univar_zc(
-    #     file_path="output_log/univar_opt_bench_24_24_run_1_kzg_open_5.log",
-    #     start_line="Opt Univariate Proof Generation Test ",
-    #     save_fig=save_each_fig,
-    # )
+    stack_univar_zc_df = plot_univar_zc(
+        file_path="output_log/new1.log",
+        start_line="Opt Univariate Proof Generation Test ",
+        save_fig=save_each_fig,
+    )
 
     # stack_multi_lin_zc_df = plot_multi_lin_zc(
     #     file_path="output_log/mullin_opt_bench_24_24_run_1_kzg_open_4.log",
@@ -507,6 +507,6 @@ if __name__ == '__main__':
     #     output_path="output_log/parallel_stacked_bar_chart_1_22_26.png"
     # )
 
-    parallel_stacked_bar_chart_univ_mulin_numvar_comm(True)
+    # parallel_stacked_bar_chart_univ_mulin_numvar_comm(True)
 
     print("End...")
