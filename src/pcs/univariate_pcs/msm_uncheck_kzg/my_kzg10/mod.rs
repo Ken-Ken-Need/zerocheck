@@ -1,10 +1,7 @@
 use ark_ec::{pairing::Pairing, VariableBaseMSM};
-use ark_ff::{Field, PrimeField};
-use ark_poly::{DenseUVPolynomial, Polynomial};
-use ark_poly_commit::{kzg10::{Commitment,  Powers, Randomness, KZG10}, Error, PCCommitmentState};
+use ark_poly::{DenseUVPolynomial};
+use ark_poly_commit::{kzg10::{Commitment,  Powers, Randomness}, Error, PCCommitmentState};
 use ark_ff::Zero;
-
-use ark_std::{rand::RngCore, vec::Vec};
 
 // fn skip_leading_zeros<F: PrimeField, P: DenseUVPolynomial<F>>(
 //     p: &P,
@@ -20,8 +17,6 @@ use ark_std::{rand::RngCore, vec::Vec};
 pub fn fast_commit_unchecked<E, P>(
     powers: &Powers<E>,
     polynomial: &P,
-    hiding_bound: Option<usize>,
-    rng: Option<&mut dyn RngCore>,
 ) -> Result<(Commitment<E>, Randomness<E::ScalarField, P>), Error>
 where
     E: Pairing,
@@ -41,7 +36,7 @@ where
         plain_coeffs,
     );
 
-    let mut randomness = Randomness::<E::ScalarField, P>::empty();
+    let randomness = Randomness::<E::ScalarField, P>::empty();
 
     // If hiding is requested
     // let random_commitment = if let Some(hiding_degree) = hiding_bound {
